@@ -1,98 +1,87 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stroke Help - Ứng dụng hỗ trợ đột quỵ</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50 text-gray-800">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stroke Help</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Fade-in + slide-up animation giống Framer Motion */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.55s ease-out; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+    /* Hover scale animation cho buttons và cards */
+    .hover-scale:hover { transform: scale(1.04); transition: transform 0.25s ease; }
+    .hover-scale:active { transform: scale(0.95); }
+
+    textarea { resize: none; }
+  </style>
+</head>
+<body class="bg-gray-50 text-slate-800">
+  <!-- Header -->
   <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur z-50 border-b border-cyan-200">
     <div class="max-w-6xl mx-auto flex items-center justify-between py-2 px-4">
       <div class="text-lg font-extrabold text-cyan-700">🧠 Stroke Help</div>
       <nav class="hidden md:flex gap-2 text-xs font-semibold">
-        <a href="#trieuchung" class="px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Triệu chứng</a>
-        <a href="#ketqua" class="px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Kết quả</a>
-        <a href="#loikhuyen" class="px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Lời khuyên</a>
-        <a href="#thuoc" class="px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Thuốc</a>
-        <a href="#socuu" class="px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Sơ cứu</a>
-        <a href="#thongtin" class="px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Thông tin</a>
+        <button onclick="scrollToSection('trieuchung')" class="nav-btn px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Triệu chứng</button>
+        <button onclick="scrollToSection('ketqua')" class="nav-btn px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Kết quả</button>
+        <button onclick="scrollToSection('loikhuyen')" class="nav-btn px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Lời khuyên</button>
+        <button onclick="scrollToSection('thuoc')" class="nav-btn px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Thuốc</button>
+        <button onclick="scrollToSection('socuu')" class="nav-btn px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Sơ cứu</button>
+        <button onclick="scrollToSection('thongtin')" class="nav-btn px-2 py-1 rounded-md text-cyan-700 hover:text-cyan-900">Thông tin</button>
       </nav>
     </div>
   </header>
 
   <main class="pt-24 pb-24 flex flex-col items-center gap-10">
-    <h1 class="text-3xl md:text-4xl font-extrabold text-cyan-800 text-center px-4">Hỗ trợ nhận biết & sơ cứu đột quỵ</h1>
 
-    <section id="trieuchung" class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
-      <h2 class="text-xl font-bold text-cyan-800 mb-4">Triệu chứng thường gặp</h2>
-      <div class="flex flex-wrap gap-2 mb-4">
-        <button class="px-3 py-1 rounded-full bg-gray-100">Méo miệng</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Yếu tay/chân</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Nói khó</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Chóng mặt</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Mất thăng bằng</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Tê liệt nửa người</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Nhìn mờ</button>
-        <button class="px-3 py-1 rounded-full bg-gray-100">Đau đầu dữ dội</button>
+    <!-- Title -->
+    <h1 class="text-3xl md:text-4xl font-extrabold text-cyan-800 text-center px-4 fade-in">Hỗ trợ nhận biết & sơ cứu đột quỵ</h1>
+
+    <!-- Triệu chứng -->
+    <section id="trieuchung" class="fade-in bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-cyan-600">❤️‍🔥</span>
+        <h2 class="text-xl font-bold text-cyan-800">Triệu chứng thường gặp</h2>
       </div>
-      <textarea placeholder="Mô tả thêm (nếu có)" class="w-full border rounded-xl p-3 mb-4" rows="3"></textarea>
-      <button class="w-full bg-cyan-700 text-white py-3 rounded-xl shadow">Phân tích</button>
+      <div class="flex flex-wrap gap-2 mb-4" id="symptom-buttons"></div>
+      <textarea id="symptom-text" placeholder="Mô tả thêm (nếu có)" class="w-full border rounded-xl p-3 mb-4"></textarea>
+      <button onclick="analyze()" class="w-full bg-cyan-700 text-white py-3 rounded-xl shadow hover-scale">Phân tích</button>
     </section>
 
-    <section id="ketqua" class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
-      <h3 class="text-lg font-bold mb-3">Kết quả phân tích</h3>
-      <div class="text-gray-800">Kết quả sẽ hiển thị tại đây sau khi phân tích.</div>
+    <!-- Kết quả -->
+    <section id="ketqua" class="fade-in bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-amber-600">⚠️</span>
+        <h3 class="text-lg font-bold">Kết quả phân tích</h3>
+      </div>
+      <div id="result" class="whitespace-pre-line text-gray-800">Kết quả sẽ hiển thị tại đây sau khi phân tích.</div>
     </section>
 
-    <section id="loikhuyen" class="py-16 px-4 w-full max-w-6xl">
+    <!-- Lời khuyên -->
+    <section id="loikhuyen" class="fade-in py-16 px-4 w-full max-w-6xl">
       <div class="text-center mb-10">
         <h2 class="text-3xl font-semibold">Lời khuyên của chuyên gia</h2>
         <p class="mt-2 text-gray-600">Tổng hợp những hướng dẫn hữu ích giúp bạn phòng ngừa và phục hồi sau đột quỵ.</p>
       </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <article class="bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg transition">
-          <h3 class="font-semibold text-cyan-700 mb-2">Phát hiện sớm là chìa khóa</h3>
-          <p class="text-sm text-gray-600">Ghi lại thời điểm khởi phát và gọi cấp cứu 115 ngay lập tức.</p>
-        </article>
-        <article class="bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg transition">
-          <h3 class="font-semibold text-cyan-700 mb-2">Kiểm soát huyết áp</h3>
-          <p class="text-sm text-gray-600">Theo dõi và duy trì huyết áp ổn định để giảm nguy cơ đột quỵ.</p>
-        </article>
-        <article class="bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg transition">
-          <h3 class="font-semibold text-cyan-700 mb-2">Phục hồi chức năng</h3>
-          <p class="text-sm text-gray-600">Tập phục hồi sớm giúp giảm di chứng và cải thiện vận động.</p>
-        </article>
-      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="expert-tips"></div>
     </section>
 
-    <section id="thuoc" class="py-16 px-4 w-full max-w-6xl">
+    <!-- Thuốc -->
+    <section id="thuoc" class="fade-in py-16 px-4 w-full max-w-6xl">
       <div class="text-center mb-10">
         <h2 class="text-3xl font-semibold">Thuốc điều trị & phòng ngừa</h2>
-        <p class="mt-2 text-gray-600">Các loại thuốc phổ biến trong điều trị và phòng ngừa đột quỵ.</p>
+        <p class="mt-2 text-gray-600">Tìm hiểu các loại thuốc phổ biến trong điều trị và phòng ngừa đột quỵ.</p>
       </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <article class="bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg transition">
-          <img src="https://themedevhub-images.netlify.app/components/images/about-1.jpg" alt="Aspirin" class="w-full h-44 rounded-lg object-cover mb-2" />
-          <h4 class="font-semibold text-cyan-800">Aspirin</h4>
-          <p class="text-sm text-gray-600">Giảm kết tập tiểu cầu, phòng ngừa huyết khối.</p>
-        </article>
-        <article class="bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg transition">
-          <img src="https://themedevhub-images.netlify.app/components/images/about-2.jpg" alt="Clopidogrel" class="w-full h-44 rounded-lg object-cover mb-2" />
-          <h4 class="font-semibold text-cyan-800">Clopidogrel</h4>
-          <p class="text-sm text-gray-600">Phối hợp hoặc thay thế Aspirin khi cần.</p>
-        </article>
-        <article class="bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg transition">
-          <img src="https://themedevhub-images.netlify.app/components/images/about-3.jpg" alt="Atorvastatin" class="w-full h-44 rounded-lg object-cover mb-2" />
-          <h4 class="font-semibold text-cyan-800">Atorvastatin</h4>
-          <p class="text-sm text-gray-600">Giảm cholesterol, ổn định mảng xơ vữa động mạch.</p>
-        </article>
-      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="medicines"></div>
     </section>
 
-    <section id="socuu" class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-4xl">
-      <h3 class="text-lg font-bold mb-3">Hướng dẫn sơ cứu cơ bản</h3>
+    <!-- Sơ cứu -->
+    <section id="socuu" class="fade-in bg-white shadow-lg rounded-2xl p-6 w-full max-w-4xl">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-cyan-600">🩺</span>
+        <h3 class="text-lg font-bold">Hướng dẫn sơ cứu cơ bản</h3>
+      </div>
       <ul class="list-disc ml-6 space-y-2 text-gray-700">
         <li>Gọi cấp cứu 115 ngay lập tức</li>
         <li>Đặt bệnh nhân nằm nghiêng an toàn</li>
@@ -102,14 +91,123 @@
       </ul>
     </section>
 
-    <section id="thongtin" class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
-      <h3 class="text-lg font-bold mb-3">Thông tin về đột quỵ</h3>
-      <p class="text-gray-700 text-sm leading-relaxed">Đột quỵ xảy ra khi lưu lượng máu lên não bị gián đoạn, khiến tế bào não thiếu oxy. Cấp cứu trong 'giờ vàng' giúp giảm nguy cơ tử vong và di chứng.</p>
+    <!-- Thông tin -->
+    <section id="thongtin" class="fade-in bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-cyan-600">💡</span>
+        <h3 class="text-lg font-bold">Thông tin về đột quỵ</h3>
+      </div>
+      <p class="text-gray-700 text-sm leading-relaxed">Đột quỵ xảy ra khi lưu lượng máu lên não bị gián đoạn, khiến tế bào não thiếu oxy. Cấp cứu trong "giờ vàng" giúp giảm nguy cơ tử vong và di chứng.</p>
     </section>
+
   </main>
 
-  <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 bg-cyan-700 text-white p-3 rounded-full shadow-lg hover:bg-cyan-800 transition">⬆️</button>
+  <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-6 right-6 bg-cyan-700 text-white p-3 rounded-full shadow-lg hover-scale">⬆️</button>
 
   <footer class="text-center text-xs text-gray-500 py-4">© 2025 Stroke Help — Thông tin chỉ mang tính tham khảo.</footer>
+
+  <script>
+    // Data
+    const symptomButtons = [
+      'Méo miệng', 'Yếu tay/chân', 'Nói khó', 'Chóng mặt', 'Mất thăng bằng', 'Tê liệt nửa người', 'Nhìn mờ', 'Đau đầu dữ dội'
+    ];
+    const expertTips = [
+      'Phát hiện sớm: ghi lại thời điểm khởi phát và gọi cấp cứu 115.',
+      'Kiểm soát huyết áp và đường huyết để giảm nguy cơ.',
+      'Người có rung nhĩ hãy trao đổi với bác sĩ về chống đông phù hợp.',
+      'Phục hồi chức năng sớm giúp cải thiện khả năng vận động.'
+    ];
+    const medicines = [
+      {name:'Aspirin', type:'Kháng tiểu cầu', purpose:'Giảm kết tập tiểu cầu, phòng ngừa huyết khối'},
+      {name:'Clopidogrel', type:'Kháng tiểu cầu', purpose:'Phối hợp hoặc thay thế aspirin'},
+      {name:'Atorvastatin', type:'Statin', purpose:'Giảm cholesterol, ổn định mảng xơ vữa'},
+      {name:'Warfarin', type:'Chống đông', purpose:'Ứng dụng trong rung nhĩ, cần theo dõi INR'},
+      {name:'Rivaroxaban', type:'NOAC', purpose:'Chống đông thế hệ mới, ít cần xét nghiệm'}
+    ];
+
+    // Triệu chứng
+    const selectedSymptoms = new Set();
+    const symContainer = document.getElementById('symptom-buttons');
+    const symptomText = document.getElementById('symptom-text');
+    const resultDiv = document.getElementById('result');
+
+    symptomButtons.forEach(sym => {
+      const btn = document.createElement('button');
+      btn.innerText = sym;
+      btn.className = 'px-3 py-1 rounded-full border bg-gray-100 text-gray-800 m-1 hover-scale';
+      btn.onclick = () => {
+        if(selectedSymptoms.has(sym)) {
+          selectedSymptoms.delete(sym);
+          btn.classList.remove('bg-cyan-700','text-white');
+          btn.classList.add('bg-gray-100','text-gray-800');
+        } else {
+          selectedSymptoms.add(sym);
+          btn.classList.add('bg-cyan-700','text-white');
+          btn.classList.remove('bg-gray-100','text-gray-800');
+        }
+      };
+      symContainer.appendChild(btn);
+    });
+
+    const analyze = () => {
+      let text = symptomText.value || Array.from(selectedSymptoms).join(', ');
+      let msg = '✅ Không phát hiện dấu hiệu điển hình. Nếu triệu chứng nặng lên, hãy đi khám sớm.';
+      if(!text.trim()) msg = '⚠️ Vui lòng nhập hoặc chọn triệu chứng để phân tích.';
+      else if(/(méo|nói|yếu|tê liệt|liệt)/i.test(text)) msg = '🚨 Dấu hiệu nghi ngờ đột quỵ — Gọi cấp cứu 115 ngay!\n\nHướng dẫn sơ cứu ngắn: ghi thời điểm, đặt người bệnh nằm nghiêng, không cho ăn/uống, đảm bảo đường thở.';
+      else if(/(chóng|mất thăng bằng|nhìn mờ)/i.test(text)) msg = '⚠️ Triệu chứng cảnh báo sớm — nên khám y tế ngay.';
+      else if(/đau đầu/i.test(text)) msg = '⚠️ Đau đầu dữ dội đột ngột — cần khám cấp cứu để loại trừ xuất huyết.';
+      resultDiv.innerText = msg;
+      scrollToSection('ketqua');
+    };
+
+    const scrollToSection = (id) => {
+      const el = document.getElementById(id);
+      if(el) window.scrollTo({top: el.offsetTop-88, behavior:'smooth'});
+    };
+
+    // Lời khuyên
+    const tipsContainer = document.getElementById('expert-tips');
+    expertTips.forEach(tip => {
+      const card = document.createElement('div');
+      card.className = 'bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg hover-scale transition';
+      const title = document.createElement('h3');
+      title.className = 'font-semibold text-cyan-700 mb-2';
+      title.innerText = tip.split(':')[0];
+      const p = document.createElement('p');
+      p.className = 'text-sm text-gray-600';
+      p.innerText = tip;
+      card.appendChild(title); card.appendChild(p);
+      tipsContainer.appendChild(card);
+    });
+
+    // Thuốc
+    const medContainer = document.getElementById('medicines');
+    medicines.forEach((m,i) => {
+      const card = document.createElement('div');
+      card.className = 'flex flex-col items-start gap-3 bg-gray-50 rounded-2xl shadow p-5 border hover:shadow-lg hover-scale transition';
+      const img = document.createElement('img');
+      img.src = `https://themedevhub-images.netlify.app/components/images/about-${(i%3)+1}.jpg`;
+      img.className = 'w-full h-44 rounded-lg object-cover';
+      const type = document.createElement('span');
+      type.className = 'text-xs font-medium bg-gray-200 px-2 py-1 rounded';
+      type.innerText = m.type;
+      const name = document.createElement('h4');
+      name.className = 'font-semibold text-cyan-800';
+      name.innerText = m.name;
+      const purpose = document.createElement('p');
+      purpose.className = 'text-sm text-gray-600';
+      purpose.innerText = m.purpose;
+      card.appendChild(img); card.appendChild(type); card.appendChild(name); card.appendChild(purpose);
+      medContainer.appendChild(card);
+    });
+
+    // Fade-in on scroll
+    const observer = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) e.target.classList.add('visible');
+      });
+    },{threshold:0.2});
+    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+  </script>
 </body>
 </html>
